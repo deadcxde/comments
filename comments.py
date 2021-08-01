@@ -6,6 +6,8 @@ import json
 import sys
 from random import choice
 
+from vk_api import exceptions
+
 with open('config.json', 'r') as f:
     config = json.load(f)
 
@@ -60,8 +62,9 @@ while True:
     try:
         vk.wall.createComment(post_id = post_id, message = msg)
         print(f'[' + str(round(time.time() - start, 3)) + f'] Comment added: "{msg}" comment count: ' + str(vk.wall.get()['items'][0]['comments']['count']))
-    except vk_api.exceptions.VkApiError as e:
-        print(f'[' + str(round(time.time() - start, 3)) + f'] Comment error: ' + e.error['error_msg'] + ' trying to sleep 300s...')
+    except vk_api.exceptions.Captcha as e:
+        print(f'[' + str(round(time.time() - start, 3)) + f'] Comment error: CAPTCHA. trying to sleep 300s...')
         time.sleep(300)
     
+
 
