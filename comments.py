@@ -1,12 +1,31 @@
-APP_VERSION = 0.3
+APP_VERSION = 0.1
 import vk_api
-from requests import post
+from requests import post, get
 import time
 import json
 import sys
 from random import choice
 
-from vk_api import exceptions
+def installUpdate():
+    r = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
+    with open('comments.py', 'w') as f:
+        f.write(r)
+    print("Обновление успешно установлено! Запусти скрипт заново.")
+    return
+
+def checkUpdates():
+    r:str = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
+    r = r.split('\r\n', maxsplit=1)[0]
+    app_ver = float(r.replace('APP_VERSION = ', ''))
+    if APP_VERSION < app_ver:
+        confirm = input("Доступно обновление. Чтобы установить - нажми ENTER, Чтобы пропустить - напиши любой символ")
+        if not confirm:
+            installUpdate()
+        else:
+            return
+
+checkUpdates()
+
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -30,6 +49,7 @@ if not config['token']:
         json.dump(config, f, indent = 4)
 
 vk = vk_api.VkApi(token=config['token']).get_api()
+
 
 def newComments() -> list:
     comments = input("Введи новый текст для комментов. Чтобы разделить текст, поставь ; (Пример: Hello world; Bye world; i want some candies)\n\n>>> ").split(';')
