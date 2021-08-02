@@ -1,4 +1,4 @@
-APP_VERSION = 0.2
+APP_VERSION = 0.3
 import vk_api
 from requests import post
 import time
