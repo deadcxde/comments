@@ -1,4 +1,4 @@
-APP_VERSION = 0.14
+APP_VERSION = 0.15
 import vk_api
 from requests import post, get
 import time
@@ -56,7 +56,7 @@ def checkUpdateNotification():
     r = r.split('\r\n', maxsplit=1)[0]
     app_ver = float(r.replace('APP_VERSION = ', ''))
     if APP_VERSION < app_ver:
-        print(f"{Fore.BLUE}Доступно обновление. Перезапусти скрипт, чтобы инициализировать установку!")
+        print(f"\n\n\n{Fore.BLUE}Доступно обновление. Перезапусти скрипт, чтобы инициализировать установку!\n\n\n")
     
     data['checkUpdateDelay'] = int(time.time())
     dumpData(data)
@@ -169,6 +169,7 @@ def multiTokenSupport():
                 
                 data['tokensOnDelay'].append(token)
                 data['tokenDelays'][token] = int(time.time())
+                dumpData(data)
                 continue
 
 def singleTokenSupport():
