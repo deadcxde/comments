@@ -1,4 +1,4 @@
-APP_VERSION = 0.2
+APP_VERSION = 0.1
 import vk_api
 from requests import post, get
 import time
@@ -6,12 +6,13 @@ import json
 import sys
 from random import choice
 
-a = 1231241
 def installUpdate():
     r = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
-    with open('comments.py', 'w') as f:
+    r = r.replace('\r', '')
+    with open('comments.py', 'w', encoding='utf-8') as f:
         f.write(r)
     print("Обновление успешно установлено! Запусти скрипт заново.")
+    exit()
     return
 
 def checkUpdates():
