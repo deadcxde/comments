@@ -1,4 +1,4 @@
-APP_VERSION = 0.1
+APP_VERSION = 0.2
 import vk_api
 from requests import post, get
 import time
@@ -6,6 +6,7 @@ import json
 import sys
 from random import choice
 
+a = 1231241
 def installUpdate():
     r = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
     with open('comments.py', 'w') as f:
