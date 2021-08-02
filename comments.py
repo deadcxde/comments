@@ -1,4 +1,4 @@
-APP_VERSION = 0.13
+APP_VERSION = 0.14
 import vk_api
 from requests import post, get
 import time
@@ -7,6 +7,26 @@ import sys
 from random import choice
 from colorama import init, Fore
 init()
+
+CHECK_UPDATE_DELAY = 300
+TOKEN_DELAY = 600
+
+def loadData() -> dict:
+    with open('data.json', 'r') as f:
+        data = json.load(f)
+    return data
+
+def dumpData(data):
+    with open('data.json', 'w') as f:
+        json.dump(data, f, indent = 4)
+    return
+
+dumpData({
+    "tokenDelays": {},
+    "tokensOnDelay": [],
+    "checkUpdateDelay": 0
+})
+
 def installUpdate():
     r = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
     r = r.replace('\r', '')
@@ -28,6 +48,19 @@ def checkUpdates():
 
 checkUpdates()
 
+def checkUpdateNotification():
+    data = loadData()
+    if time.time() - data['checkUpdateDelay'] < CHECK_UPDATE_DELAY:
+        return
+    r:str = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
+    r = r.split('\r\n', maxsplit=1)[0]
+    app_ver = float(r.replace('APP_VERSION = ', ''))
+    if APP_VERSION < app_ver:
+        print(f"{Fore.BLUE}Доступно обновление. Перезапусти скрипт, чтобы инициализировать установку!")
+    
+    data['checkUpdateDelay'] = int(time.time())
+    dumpData(data)
+    return
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -98,7 +131,6 @@ if not config['token']:
 else:
     answerTokens()
 
-
 if not config['comments']:
     config['comments'] = newComments()
     with open('config.json', 'w') as f:
@@ -116,14 +148,27 @@ def multiTokenSupport():
     commentList = config['comments']
     print(f'\n\n{Fore.MAGENTA}Начинаю накрутку...')
     while True:
+        checkUpdateNotification()
         for token in config['token']:
+            data:dict = loadData()
+            if token in data['tokensOnDelay']:
+                if time.time() - data['tokenDelays'][token] > TOKEN_DELAY:
+                    data['tokensOnDelay'].remove(token)
+                    data['tokenDelays'].pop(token)
+                    print(f'{Fore.GREEN}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.GREEN}] {token} out from delay!')
+                    dumpData(data)
+                else:
+                    continue
             vk = vk_api.VkApi(token=token).get_api()
             msg = choice(commentList)
             try:
                 vk.wall.createComment(post_id = post_id, message = msg, owner_id = user_id)
-                print(f'{Fore.GREEN}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.GREEN}] Comment added: "{msg}" comment count: ' + str(vk.wall.get()['items'][0]['comments']['count']))
+                print(f'{Fore.GREEN}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.GREEN}] Comment added: "{msg}" comment count: ' + str(vk.wall.get(owner_id = user_id)['items'][0]['comments']['count']))
             except vk_api.exceptions.Captcha as e:
-                print(f'{Fore.RED}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.RED}] Comment error: CAPTCHA. skip to next token...')
+                print(f'{Fore.RED}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.RED}] Comment error: CAPTCHA. set {TOKEN_DELAY}s delay...')
+                
+                data['tokensOnDelay'].append(token)
+                data['tokenDelays'][token] = int(time.time())
                 continue
 
 def singleTokenSupport():
@@ -134,6 +179,7 @@ def singleTokenSupport():
     commentList = config['comments']
     print(f'\n\n{Fore.MAGENTA}Начинаю накрутку...')
     while True:
+        checkUpdateNotification()
         msg = choice(commentList)
         try:
             vk.wall.createComment(post_id = post_id, message = msg)
