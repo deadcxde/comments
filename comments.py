@@ -1,4 +1,4 @@
-APP_VERSION = 0.11
+APP_VERSION = 0.12
 import vk_api
 from requests import post, get
 import time
@@ -47,11 +47,6 @@ def login():
                 print('Неверный токен.')
                 continue
 
-if not config['token']:
-    config['token'] = login()
-    with open('config.json', 'w') as f: 
-        json.dump(config, f, indent = 4)
-
 def newComments() -> list:
     comments = input("Введи новый текст для комментов. Чтобы разделить текст, поставь ; (Пример: Hello world; Bye world; i want some candies)\n\n>>> ").split(';')
     return comments
@@ -76,6 +71,13 @@ def answerTokens():
     else:
         return
 
+if not config['token']:
+    config['token'] = login()
+    with open('config.json', 'w') as f: 
+        json.dump(config, f, indent = 4)
+else:
+    answerTokens()
+
 
 if not config['comments']:
     config['comments'] = newComments()
@@ -83,6 +85,8 @@ if not config['comments']:
         json.dump(config, f, indent = 4)
 else:
     answerComments()
+
+
 
 def multiTokenSupport():
     
