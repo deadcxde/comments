@@ -1,4 +1,4 @@
-APP_VERSION = 0.16
+APP_VERSION = 0.17
 import vk_api
 from requests import post, get
 import time
@@ -222,13 +222,12 @@ def multiTokenSupport():
             except vk_api.exceptions.Captcha as captcha:
                 
                 # captchaTries += 1
-                if captchaTries < 3:
-                    captchaTries = 0
-                    print(f'{Fore.RED}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.RED}] Comment error: CAPTCHA. wait captcha answer...')
-                    processCaptcha(token)
-                    pass
-                else:
-                    print(f'{Fore.RED}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.RED}] Comment error: CAPTCHA. set {TOKEN_DELAY}s delay...')
+                # if captchaTries < 3:
+                #     captchaTries = 0
+                #     print(f'{Fore.RED}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.RED}] Comment error: CAPTCHA. wait captcha answer...')
+                #     processCaptcha(token)
+                #     pass
+                print(f'{Fore.RED}[{Fore.YELLOW}' + str(round(time.time() - start, 3)) + f'{Fore.RED}] Comment error: CAPTCHA. set {TOKEN_DELAY}s delay...')
                 data['tokensOnDelay'].append(token)
                 data['tokenDelays'][token] = int(time.time())
                 dumpData(data)
