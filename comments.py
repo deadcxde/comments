@@ -1,4 +1,4 @@
-APP_VERSION = 0.18
+APP_VERSION = 0.19
 import vk_api
 from requests import post, get
 import time
@@ -189,7 +189,7 @@ def processCaptcha(token, captcha):
                 print("Ответа на капчу не было получено.")
                 return
             if event.type == VkEventType.MESSAGE_NEW:
-                if '!get' in event.text and not event.from_me:
+                if '!get' in event.text and not event.from_me and event.user_id != vk.users.get()[0]['id']:
                     print("Ответ на капчу принят, код:" + event.text.replace('!get ', ''))
                     return captcha.try_again(event.text.replace('!get ', ''))
 
