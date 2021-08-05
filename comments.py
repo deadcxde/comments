@@ -1,4 +1,4 @@
-APP_VERSION = 0.19
+APP_VERSION = 0.20
 import vk_api
 from requests import post, get
 import time
@@ -185,7 +185,7 @@ def processCaptcha(token, captcha):
     startCaptcha = int(time.time())
     while True:
         for event in longpoll.listen():
-            if time.time() - startCaptcha == 900:
+            if time.time() - startCaptcha >= 900:
                 print("Ответа на капчу не было получено.")
                 return
             if event.type == VkEventType.MESSAGE_NEW:
