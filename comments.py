@@ -30,7 +30,7 @@ dumpData({
 })
 
 def installUpdate():
-    r = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
+    r = get('https://raw.githubusercontent.com/deadcxde/comments/main/comments.py').text
     r = r.replace('\r', '')
     with open('comments.py', 'w', encoding='utf-8') as f:
         f.write(r)
@@ -38,7 +38,7 @@ def installUpdate():
     exit()
 
 def checkUpdates():
-    r:str = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
+    r:str = get('https://raw.githubusercontent.com/deadcxde/comments/main/comments.py').text
     r = r.split('\r\n', maxsplit=1)[0]
     app_ver = float(r.replace('APP_VERSION = ', ''))
     if APP_VERSION < app_ver:
@@ -54,7 +54,7 @@ def checkUpdateNotification():
     data = loadData()
     if time.time() - data['checkUpdateDelay'] < CHECK_UPDATE_DELAY:
         return
-    r:str = get('https://raw.githubusercontent.com/insan1tyyy/comments/main/comments.py').text
+    r:str = get('https://raw.githubusercontent.com/deadcxde/comments/main/comments.py').text
     r = r.split('\r\n', maxsplit=1)[0]
     app_ver = float(r.replace('APP_VERSION = ', ''))
     if APP_VERSION < app_ver:
