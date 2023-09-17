@@ -1,6 +1,6 @@
 APP_VERSION = 0.20
 import vk_api
-from requests import post, get
+from httpx import post, get
 import time
 import json
 import sys
